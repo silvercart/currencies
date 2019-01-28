@@ -1,0 +1,21 @@
+de:
+    SilverCart\Currencies\Extensions\MemberExtension:
+        DefaultCurrency: "Standard Währung"
+    SilverCart\Currencies\Extensions\OrderExtension:
+        DefaultCurrency: "Standard Währung"
+        DefaultCurrencyFactor: "Umrechungsfaktor Standard Währung"
+        DefaultCurrencyFactorDesc: "Umrechungsfaktor zur Standard Währung zum Zeitpubnkt der Bestellung."
+    SilverCart\Currencies\Model\Currency:
+        Currency: "Währung"
+        Factor: "Umrechnungsfaktor"
+        FactorDesc: "Umrechnungsfaktor im Bezug auf die Standardwährung. [Wert Standardwährung x Umrechnungsfaktor = Wert diese Währung]"
+        IsDefault: "Ist Standard"
+    SilvercartCurrency:
+        Currency: "Währung"
+        Factor: "Umrechnungsfaktor"
+        FactorDesc: "Umrechnungsfaktor im Bezug auf die Standardwährung. [Wert Standardwährung x Umrechnungsfaktor = Wert diese Währung]"
+        IsDefault: "Ist Standard"
+        PLURALNAME: "Währungen"
+        SINGULARNAME: "Währung"
+    SilverCart\Currencies\Admin\Controllers\CurrencyAdmin:
+        MENUTITLE: "Währungen"

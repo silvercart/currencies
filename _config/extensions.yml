@@ -1,0 +1,15 @@
+Member:
+    extensions:
+        - SilverCart\Currencies\Extensions\MemberExtension
+SilvercartMoney:
+    extensions:
+        - SilverCart\Currencies\Extensions\MoneyExtension
+SilvercartOrder:
+    extensions:
+        - SilverCart\Currencies\Extensions\OrderExtension
+SilvercartProduct:
+    extensions:
+        - SilverCart\Currencies\Extensions\ProductExtension
+SiteConfig:
+    extensions:
+        - SilverCart\Currencies\Extensions\ConfigExtension
