@@ -2,10 +2,10 @@
 
 //namespace SilverCart\Currencies\Model;
 
-use DB;
-use DataObject;
-use DropdownField;
-use FieldList;
+use DB as DB;
+use DataObject as DataObject;
+use DropdownField as DropdownField;
+use FieldList as FieldList;
 use SilvercartConfig as Config;
 use SilvercartTools as Tools;
 
