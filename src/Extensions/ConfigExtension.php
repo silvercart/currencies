@@ -36,7 +36,7 @@ class ConfigExtension extends DataExtension
     public function updateDefaultCurrency(&$defaultCurrency)
     {
         $currency = self::getCurrentCurrency();
-        if ($currency instanceof $currency) {
+        if ($currency instanceof Currency) {
             $defaultCurrency = $currency->Currency;
         }
     }
