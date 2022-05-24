@@ -2,12 +2,11 @@
 
 namespace SilverCart\Currencies\Extensions;
 
-use DataExtension;
-use Member;
-use Session;
-use SilvercartCurrency as Currency;
-use SilvercartCustomer as Customer;
-use SilvercartTools as Tools;
+use SilverCart\Dev\Tools;
+use SilverCart\Currencies\Model\Currency;
+use SilverCart\Model\Customer\Customer;
+use SilverStripe\ORM\DataExtension;
+use SilverStripe\Security\Member;
 
 /**
  * Extension for SiteConfig.
@@ -18,6 +17,8 @@ use SilvercartTools as Tools;
  * @since 14.12.2018
  * @copyright 2018 pixeltricks GmbH
  * @license see license file in modules root directory
+ * 
+ * @property \SilverStripe\SiteConfig\SiteConfig $owner Owner
  */
 class ConfigExtension extends DataExtension
 {
@@ -29,11 +30,8 @@ class ConfigExtension extends DataExtension
      * @param string &$defaultCurrency Currency to update
      * 
      * @return void
-     * 
-     * @author Sebastian Diel <sdiel@pixeltricks.de>
-     * @since 14.12.2018
      */
-    public function updateDefaultCurrency(&$defaultCurrency)
+    public function updateDefaultCurrency(string &$defaultCurrency) : void
     {
         $currency = self::getCurrentCurrency();
         if ($currency instanceof Currency) {
@@ -44,18 +42,15 @@ class ConfigExtension extends DataExtension
     /**
      * Returns thr current currency.
      * 
-     * @return Currency
-     * 
-     * @author Sebastian Diel <sdiel@pixeltricks.de>
-     * @since 17.12.2018
+     * @return Currency|null
      */
-    public static function getCurrentCurrency()
+    public static function getCurrentCurrency() : ?Currency
     {
         if (Tools::isBackendEnvironment()) {
             $currency = Currency::getDefault();
         } else {
             $currency        = null;
-            $sessionCurrency = Session::get(self::SESSION_KEY_CURRENCY);
+            $sessionCurrency = Tools::Session()->get(self::SESSION_KEY_CURRENCY);
             if (is_null($sessionCurrency)) {
                 $customer = Customer::currentUser();
                 if ($customer instanceof Member
@@ -77,14 +72,11 @@ class ConfigExtension extends DataExtension
     
     /**
      * Returns thr current currency.
-     * Alisas for self::getCurrentCurrency().
+     * Alias for self::getCurrentCurrency().
      * 
-     * @return Currency
-     * 
-     * @author Sebastian Diel <sdiel@pixeltricks.de>
-     * @since 17.12.2018
+     * @return Currency|null
      */
-    public static function CurrentCurrency()
+    public static function CurrentCurrency() : ?Currency
     {
         return self::getCurrentCurrency();
     }

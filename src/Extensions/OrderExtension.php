@@ -2,8 +2,8 @@
 
 namespace SilverCart\Currencies\Extensions;
 
-use DataExtension;
-use SilvercartCurrency as Currency;
+use SilverCart\Currencies\Model\Currency;
+use SilverStripe\ORM\DataExtension;
 
 /**
  * Extension for SilverCart Order.
@@ -14,6 +14,8 @@ use SilvercartCurrency as Currency;
  * @since 17.12.2018
  * @copyright 2018 pixeltricks GmbH
  * @license see license file in modules root directory
+ * 
+ * @property \SilverCart\Model\Order\Order $owner Owner
  */
 class OrderExtension extends DataExtension
 {
@@ -31,7 +33,7 @@ class OrderExtension extends DataExtension
      * @var array
      */
     private static $has_one = [
-        'DefaultCurrency' => 'SilvercartCurrency',
+        'DefaultCurrency' => Currency::class,
     ];
     
     /**
@@ -40,11 +42,8 @@ class OrderExtension extends DataExtension
      * @param array &$labels Labels to update.
      * 
      * @return void
-     * 
-     * @author Sebastian Diel <sdiel@pixeltricks.de>
-     * @since 17.12.2018
      */
-    public function updateFieldLabels(&$labels)
+    public function updateFieldLabels(&$labels) : void
     {
         $labels = array_merge($labels, [
             'DefaultCurrency'           => _t(self::class . '.DefaultCurrency', 'Default Currency'),
@@ -57,11 +56,8 @@ class OrderExtension extends DataExtension
      * Adds the default currency and the calculation factor to the order.
      * 
      * @return void
-     * 
-     * @author Sebastian Diel <sdiel@pixeltricks.de>
-     * @since 17.12.2018
      */
-    public function onBeforeWrite()
+    public function onBeforeWrite() : void
     {
         parent::onBeforeWrite();
         if (empty($this->DefaultCurrencyID)) {

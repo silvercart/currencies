@@ -1,0 +1,21 @@
+{
+    "name": "silvercart/currencies",
+    "type": "silverstripe-vendormodule",
+    "description": "Multi currency module for the SilverCart ecommerce module for SilverStripe",
+    "homepage": "http://www.silvercart.org",
+    "license": "LGPL-3.0",
+    "keywords": ["silverstripe", "silvercart", "ecommerce", "shop", "webshop", "online shop", "currency", "currencies"],
+    "authors": [
+        {
+            "name": "SilverCart",
+            "homepage": "http://www.silvercart.org"
+        },
+        {
+            "name": "pixeltricks",
+            "homepage": "http://www.pixeltricks.de"
+        }
+    ],
+    "require": {
+        "silvercart/silvercart": "~4.2"
+    }
+}

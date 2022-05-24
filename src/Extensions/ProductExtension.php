@@ -2,12 +2,12 @@
 
 namespace SilverCart\Currencies\Extensions;
 
-use ArrayList;
-use DataExtension;
-use Member;
-use SilvercartConfig as Config;
-use SilvercartCurrency as Currency;
-use SIlvercartProduct as Product;
+use SilverCart\Admin\Model\Config as SilverCartConfig;
+use SilverCart\Currencies\Model\Currency;
+use SilverCart\Model\Product\Product;
+use SilverStripe\ORM\ArrayList;
+use SilverStripe\ORM\DataExtension;
+use SilverStripe\Security\Member;
 
 /**
  * Extension for SilverCart Product.
@@ -18,6 +18,8 @@ use SIlvercartProduct as Product;
  * @since 28.01.2019
  * @copyright 2019 pixeltricks GmbH
  * @license see license file in modules root directory
+ * 
+ * @property \SilverCart\Model\Product\Product $owner Owner
  */
 class ProductExtension extends DataExtension
 {
@@ -49,7 +51,7 @@ class ProductExtension extends DataExtension
     public function getDisplayCurrency() : string
     {
         if (!array_key_exists($this->owner->ID, $this->displayCurrency)) {
-            $displayCurrency = Config::DefaultCurrency();
+            $displayCurrency = SilverCartConfig::DefaultCurrency();
             $this->setDisplayCurrency($displayCurrency);
         }
         return $this->displayCurrency[$this->owner->ID];
@@ -61,9 +63,6 @@ class ProductExtension extends DataExtension
      * @param array &$filter Filter to update
      * 
      * @return void
-     * 
-     * @author Sebastian Diel <sdiel@pixeltricks.de>
-     * @since 28.01.2019
      */
     public function updateGraduatedPriceFilter(array &$filter) : void
     {
@@ -76,9 +75,6 @@ class ProductExtension extends DataExtension
      * @param array &$filter Filter to update
      * 
      * @return void
-     * 
-     * @author Sebastian Diel <sdiel@pixeltricks.de>
-     * @since 28.01.2019
      */
     public function updateGraduatedPricesFilter(array &$filter) : void
     {
@@ -93,14 +89,11 @@ class ProductExtension extends DataExtension
      * @param int       $quantity                        Quantity
      * 
      * @return void
-     * 
-     * @author Sebastian Diel <sdiel@pixeltricks.de>
-     * @since 28.01.2019
      */
     public function updateGraduatedPriceForCustomersGroups(ArrayList &$graduatedPricesForMembersGroups, Member $member = null, int $quantity = 1) : void
     {
         $defaultCurrency = Currency::getDefault();
-        $displayCurrency = Config::DefaultCurrency();
+        $displayCurrency = SilverCartConfig::DefaultCurrency();
         if (!$graduatedPricesForMembersGroups->exists()
          && $defaultCurrency->Currency != $displayCurrency
         ) {
@@ -117,18 +110,15 @@ class ProductExtension extends DataExtension
     /**
      * Adds support for the customer rebate group to graduated prices.
      * 
-     * @param ArrayList $graduatedPricesForMembersGroups Graduated prices
-     * @param Member    $member                          Member context
+     * @param ArrayList &$graduatedPricesForMembersGroups Graduated prices
+     * @param Member    $member                           Member context
      * 
      * @return void
-     * 
-     * @author Sebastian Diel <sdiel@pixeltricks.de>
-     * @since 28.01.2019
      */
-    public function updateGraduatedPricesForCustomersGroups(ArrayList $graduatedPricesForMembersGroups, Member $member = null) : void
+    public function updateGraduatedPricesForCustomersGroups(ArrayList &$graduatedPricesForMembersGroups, Member $member = null) : void
     {
         $defaultCurrency = Currency::getDefault();
-        $displayCurrency = Config::DefaultCurrency();
+        $displayCurrency = SilverCartConfig::DefaultCurrency();
         if (!$graduatedPricesForMembersGroups->exists()
          && $defaultCurrency->Currency != $displayCurrency
         ) {

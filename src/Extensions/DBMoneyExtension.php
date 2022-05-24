@@ -2,10 +2,10 @@
 
 namespace SilverCart\Currencies\Extensions;
 
-use DataExtension;
-use SilvercartConfig as Config;
-use SilvercartCurrency as Currency;
-use SilvercartTools as Tools;
+use SilverCart\Dev\Tools;
+use SilverCart\Admin\Model\Config as SilverCartConfig;
+use SilverCart\Currencies\Model\Currency;
+use SilverStripe\Core\Extension;
 
 /**
  * Extension for SilvercartMoney.
@@ -16,8 +16,10 @@ use SilvercartTools as Tools;
  * @since 14.12.2018
  * @copyright 2018 pixeltricks GmbH
  * @license see license file in modules root directory
+ * 
+ * @property \SilverCart\ORM\FieldType\DBMoney $owner Owner
  */
-class MoneyExtension extends DataExtension
+class DBMoneyExtension extends Extension
 {
     /**
      * Determines whether to update values or not.
@@ -31,7 +33,7 @@ class MoneyExtension extends DataExtension
      * 
      * @return bool
      */
-    public static function skipUpdate()
+    public static function skipUpdate() : bool
     {
         return self::getSkipUpdate();
     }
@@ -41,7 +43,7 @@ class MoneyExtension extends DataExtension
      * 
      * @return bool
      */
-    public static function getSkipUpdate()
+    public static function getSkipUpdate() : bool
     {
         if (Tools::isBackendEnvironment()) {
             self::setSkipUpdate(true);
@@ -56,7 +58,7 @@ class MoneyExtension extends DataExtension
      * 
      * @return void
      */
-    public static function setSkipUpdate($skipUpdate)
+    public static function setSkipUpdate(bool $skipUpdate) : void
     {
         self::$skipUpdate = $skipUpdate;
     }
@@ -67,16 +69,13 @@ class MoneyExtension extends DataExtension
      * @param float &$amount Amount to update
      * 
      * @return void
-     * 
-     * @author Sebastian Diel <sdiel@pixeltricks.de>
-     * @since 14.12.2018
      */
-    public function updateAmount(&$amount)
+    public function updateAmount(float &$amount) : void
     {
         if (self::skipUpdate()) {
             return;
         }
-        $displayCurrency = Config::DefaultCurrency();
+        $displayCurrency = SilverCartConfig::DefaultCurrency();
         self::setSkipUpdate(true);
         $currency = $this->owner->getCurrency();
         self::setSkipUpdate(false);
@@ -92,15 +91,12 @@ class MoneyExtension extends DataExtension
      * @param string &$currency Currency to update
      * 
      * @return void
-     * 
-     * @author Sebastian Diel <sdiel@pixeltricks.de>
-     * @since 14.12.2018
      */
-    public function updateCurrency(&$currency)
+    public function updateCurrency(string &$currency) : void
     {
         if (self::skipUpdate()) {
             return;
         }
-        $currency = Config::DefaultCurrency();
+        $currency = SilverCartConfig::DefaultCurrency();
     }
 }

@@ -1,15 +1,18 @@
-Member:
+---
+Name: silvercart-currencies-extensions
+---
+SilverStripe\Security\Member:
     extensions:
         - SilverCart\Currencies\Extensions\MemberExtension
-SilvercartMoney:
+SilverCart\ORM\FieldType\DBMoney:
     extensions:
-        - SilverCart\Currencies\Extensions\MoneyExtension
-SilvercartOrder:
+        - SilverCart\Currencies\Extensions\DBMoneyExtension
+SilverCart\Model\Order\Order:
     extensions:
         - SilverCart\Currencies\Extensions\OrderExtension
-SilvercartProduct:
+SilverCart\Model\Product\Product:
     extensions:
         - SilverCart\Currencies\Extensions\ProductExtension
-SiteConfig:
+SilverStripe\SiteConfig\SiteConfig:
     extensions:
         - SilverCart\Currencies\Extensions\ConfigExtension

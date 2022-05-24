@@ -1,13 +1,13 @@
 <?php
 
-//namespace SilverCart\Currencies\Model;
+namespace SilverCart\Currencies\Model;
 
-use DB as DB;
-use DataObject as DataObject;
-use DropdownField as DropdownField;
-use FieldList as FieldList;
-use SilvercartConfig as Config;
-use SilvercartTools as Tools;
+use SilverCart\Admin\Model\Config as SilverCartConfig;
+use SilverCart\Dev\Tools;
+use SilverStripe\Forms\DropdownField;
+use SilverStripe\Forms\FieldList;
+use SilverStripe\ORM\DataObject;
+use SilverStripe\ORM\DB;
 
 /**
  * A currency with a calculation factor to the default currency.
@@ -19,8 +19,9 @@ use SilvercartTools as Tools;
  * @copyright 2018 pixeltricks GmbH
  * @license see license file in modules root directory
  */
-class SilvercartCurrency extends DataObject
+class Currency extends DataObject
 {
+    use \SilverCart\ORM\ExtensibleDataObject;
     /**
      * DB attributes.
      *
@@ -36,14 +37,14 @@ class SilvercartCurrency extends DataObject
      *
      * @var array
      */
-    private static $table_name = 'SilvercartCurrency';
+    private static $table_name = 'SilverCart_Currency';
     
     /**
      * Returns the plural name.
      * 
      * @return string
      */
-    public function plural_name()
+    public function plural_name() : string
     {
         return Tools::plural_name_for($this);
     }
@@ -53,7 +54,7 @@ class SilvercartCurrency extends DataObject
      * 
      * @return string
      */
-    public function singular_name()
+    public function singular_name() : string
     {
         return Tools::singular_name_for($this);
     }
@@ -63,7 +64,7 @@ class SilvercartCurrency extends DataObject
      * 
      * @return FieldList
      */
-    public function getCMSFields()
+    public function getCMSFields() : FieldList
     {
         $this->beforeUpdateCMSFields(function(FieldList $fields) {
             $excludeCurrencies = SilvercartCurrency::get()->map('ID', 'Currency')->toArray();
@@ -88,12 +89,9 @@ class SilvercartCurrency extends DataObject
      * 
      * @return array
      */
-    public function fieldLabels($includerelations = true)
+    public function fieldLabels($includerelations = true) : array
     {
-        return array_merge(
-                parent::fieldLabels($includerelations),
-                Tools::field_labels_for(self::class)
-        );
+        return $this->defaultFieldLabels($includerelations, []);
     }
     
     /**
@@ -101,7 +99,7 @@ class SilvercartCurrency extends DataObject
      * 
      * @return array
      */
-    public function summaryFields()
+    public function summaryFields() : array
     {
         return [
             'Currency'  => $this->fieldLabel('Currency'),
@@ -114,11 +112,8 @@ class SilvercartCurrency extends DataObject
      * Handles the default currency property on before write.
      * 
      * @return void
-     * 
-     * @author Sebastian Diel <sdiel@pixeltricks.de>
-     * @since 29.11.2018
      */
-    protected function onBeforeWrite()
+    protected function onBeforeWrite() : void
     {
         parent::onBeforeWrite();
         if ($this->isChanged('IsDefault')
@@ -133,18 +128,15 @@ class SilvercartCurrency extends DataObject
      * Adds the default currency if no currency exists yet.
      * 
      * @return void
-     * 
-     * @author Sebastian Diel <sdiel@pixeltricks.de>
-     * @since 29.11.2018
      */
-    public function requireDefaultRecords()
+    public function requireDefaultRecords() : void
     {
         $existing = self::get();
         if ($existing->exists()) {
             return;
         }
         $currency = self::create();
-        $currency->Currency  = Config::DefaultCurrency();
+        $currency->Currency  = SilverCartConfig::DefaultCurrency();
         $currency->IsDefault = true;
         $currency->write();
     }
@@ -154,9 +146,9 @@ class SilvercartCurrency extends DataObject
      * 
      * @return string
      */
-    public function getTitle()
+    public function getTitle() : string
     {
-        return $this->Currency;
+        return (string) $this->Currency;
     }
     
     /**
@@ -166,7 +158,7 @@ class SilvercartCurrency extends DataObject
      * 
      * @return array
      */
-    public static function getCurrencyList($excludeCurrencies = [])
+    public static function getCurrencyList(array $excludeCurrencies = []) : array
     {
         $xml          = file_get_contents( dirname(__FILE__) . '/../../xml/currencies.xml');
         $xmlAsArray   = json_decode(json_encode((array) simplexml_load_string($xml)), 1);
@@ -199,9 +191,9 @@ class SilvercartCurrency extends DataObject
     /**
      * Returns the default currency.
      * 
-     * @return SilvercartCurrency
+     * @return Currency|null
      */
-    public static function getDefault()
+    public static function getDefault() : ?Currency
     {
         return self::get()
             ->filter('IsDefault', true)
@@ -216,11 +208,8 @@ class SilvercartCurrency extends DataObject
      * @param string $toCurrency   Target currency
      * 
      * @return float
-     * 
-     * @author Sebastian Diel <sdiel@pixeltricks.de>
-     * @since 14.12.2018
      */
-    public static function convertFromCurrency($amount, $fromCurrency, $toCurrency)
+    public static function convertFromCurrency(float $amount, string $fromCurrency, string $toCurrency) : float
     {
         $convertedAmount = $amount;
         $defaultCurrency = self::getDefault();
@@ -258,7 +247,7 @@ class SilvercartCurrency extends DataObject
      * 
      * @return float
      */
-    public static function getFactorFor($fromCurrency, $toCurrency)
+    public static function getFactorFor(string $fromCurrency, string $toCurrency) : float
     {
         $factor = 0;
         if ($fromCurrency != $toCurrency) {
@@ -285,7 +274,7 @@ class SilvercartCurrency extends DataObject
      * 
      * @return float
      */
-    public static function getCurrentExchangeRate($fromCurrency, $toCurrency) : float
+    public static function getCurrentExchangeRate(string $fromCurrency, string $toCurrency) : float
     {
         return self::convertAmountWithCurrentExchangeRate($fromCurrency, $toCurrency);
     }
@@ -303,7 +292,7 @@ class SilvercartCurrency extends DataObject
      * @author Sebastian Diel <sdiel@pixeltricks.de>
      * @since 20.12.2018
      */
-    public static function convertAmountWithCurrentExchangeRate($fromCurrency, $toCurrency, $amount = 1) : float
+    public static function convertAmountWithCurrentExchangeRate(string $fromCurrency, string $toCurrency, float $amount = 1) : float
     {
         $factor   = 0;
         $property = "{$fromCurrency}_{$toCurrency}";

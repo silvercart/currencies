@@ -2,9 +2,11 @@
 
 namespace SilverCart\Currencies\Admin\Controllers;
 
-use SilvercartModelAdmin as ModelAdmin;
+use SilverCart\Admin\Controllers\ModelAdmin as SilverCartModelAdmin;
+use SilverCart\Currencies\Model\Currency;
 
 /**
+ * Model admin for SilverCart Currency.
  * 
  * @package SilverCart
  * @subpackage Currencies\Admin\Controllers
@@ -13,39 +15,38 @@ use SilvercartModelAdmin as ModelAdmin;
  * @copyright 2018 pixeltricks GmbH
  * @license see license file in modules root directory
  */
-class CurrencyAdmin extends ModelAdmin
+class CurrencyAdmin extends SilverCartModelAdmin
 {
     /**
      * The code of the menu under which this admin should be shown.
      * 
      * @var string
      */
-    public static $menuCode = 'config';
+    private static $menuCode = 'config';
     /**
      * The section of the menu under which this admin should be grouped.
      * 
      * @var string
      */
-    public static $menuSortIndex = 50;
+    private static $menuSortIndex = 50;
     /**
      * The URL segment
      *
      * @var string
      */
-    public static $url_segment = 'silvercart-currencies';
+    private static $url_segment = 'silvercart-currencies';
     /**
      * The menu title
      *
      * @var string
      */
-    public static $menu_title = 'Currencies';
-
+    private static $menu_title = 'Currencies';
     /**
      * Managed models
      *
      * @var array
      */
-    public static $managed_models = [
-        'SilvercartCurrency',
+    private static $managed_models = [
+        Currency::class,
     ];
 }

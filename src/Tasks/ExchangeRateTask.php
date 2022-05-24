@@ -2,9 +2,9 @@
 
 namespace SilverCart\Currencies\Tasks;
 
-use SilvercartCurrency as Currency;
-use BuildTask;
-use SS_HTTPRequest as HTTPRequest;
+use SilverCart\Currencies\Model\Currency;
+use SilverStripe\Control\HTTPRequest;
+use SilverStripe\Dev\BuildTask;
 
 /**
  * Task to update the currency exchange rates.
@@ -25,13 +25,11 @@ class ExchangeRateTask extends BuildTask
      * @var string
      */
     private static $segment = 'currency-exchange-rate-task';
-
     /**
      * @var string $title Shown in the overview on the {@link TaskRunner}
      * HTML or CLI interface. Should be short and concise, no HTML allowed.
      */
     protected $title = 'Update Currency Exchange Rate Task';
-
     /**
      * @var string $description Describe the implications the task has,
      * and the changes it makes. Accepts HTML formatting.
