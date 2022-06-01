@@ -66,11 +66,11 @@ class DBMoneyExtension extends Extension
     /**
      * Updates the money amount.
      * 
-     * @param float &$amount Amount to update
+     * @param float|null &$amount Amount to update
      * 
      * @return void
      */
-    public function updateAmount(float &$amount) : void
+    public function updateAmount(?float &$amount) : void
     {
         if (self::skipUpdate()) {
             return;
