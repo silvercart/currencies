@@ -18,6 +18,7 @@ use SilverStripe\Dev\BuildTask;
  */
 class ExchangeRateTask extends BuildTask
 {
+    use \SilverCart\Dev\CLITask;
     /**
      * Set a custom url segment (to follow dev/tasks/)
      *
@@ -51,9 +52,11 @@ class ExchangeRateTask extends BuildTask
         $defaultCurrency      = Currency::getDefault();
         $nonDefaultCurrencies = Currency::get()
                 ->filter('IsDefault', false);
+        $this->printInfo("Found {$nonDefaultCurrencies->count()} non default currencies to handle...");
         foreach ($nonDefaultCurrencies as $nonDefaultCurrency) {
             /* @var $nonDefaultCurrency Currency */
             $currentFactor = Currency::getCurrentExchangeRate($defaultCurrency->Currency, $nonDefaultCurrency->Currency);
+            $this->printInfo("{$nonDefaultCurrency->Currency} | {$nonDefaultCurrency->Factor} | {$currentFactor}");
             if ($nonDefaultCurrency->Factor != $currentFactor) {
                 $nonDefaultCurrency->Factor = $currentFactor;
                 $nonDefaultCurrency->write();

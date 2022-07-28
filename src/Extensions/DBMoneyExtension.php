@@ -8,7 +8,7 @@ use SilverCart\Currencies\Model\Currency;
 use SilverStripe\Core\Extension;
 
 /**
- * Extension for SilvercartMoney.
+ * Extension for SilverCart DBMoney.
  * 
  * @package SilverCart
  * @subpackage Currencies\Extensions

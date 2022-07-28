@@ -2,7 +2,9 @@
 
 namespace SilverCart\Currencies\Model;
 
+use Exception;
 use SilverCart\Admin\Model\Config as SilverCartConfig;
+use SilverCart\Currencies\Model\Currency;
 use SilverCart\Dev\Tools;
 use SilverStripe\Forms\DropdownField;
 use SilverStripe\Forms\FieldList;
@@ -18,6 +20,10 @@ use SilverStripe\ORM\DB;
  * @since 29.11.2018
  * @copyright 2018 pixeltricks GmbH
  * @license see license file in modules root directory
+ * 
+ * @property bool   $IsDefault Is Default
+ * @property string $Currency  Currency
+ * @property float  $Factor    Factor
  */
 class Currency extends DataObject
 {
@@ -38,6 +44,24 @@ class Currency extends DataObject
      * @var array
      */
     private static $table_name = 'SilverCart_Currency';
+    /**
+     * API endpoint.
+     * 
+     * @var string
+     */
+    private static $api_endpoint = 'https://free.currconv.com';
+    /**
+     * API version.
+     * 
+     * @var string
+     */
+    private static $api_version = 'v7';
+    /**
+     * API key.
+     * 
+     * @var string
+     */
+    private static $api_key = '';
     
     /**
      * Returns the plural name.
@@ -67,7 +91,7 @@ class Currency extends DataObject
     public function getCMSFields() : FieldList
     {
         $this->beforeUpdateCMSFields(function(FieldList $fields) {
-            $excludeCurrencies = SilvercartCurrency::get()->map('ID', 'Currency')->toArray();
+            $excludeCurrencies = Currency::get()->map('ID', 'Currency')->toArray();
             if ($this->exists()
              && array_key_exists($this->ID, $excludeCurrencies))
             {
@@ -217,7 +241,7 @@ class Currency extends DataObject
             $targetCurrency = self::get()
                     ->filter('Currency', $toCurrency)
                     ->first();
-            if ($targetCurrency instanceof SilvercartCurrency
+            if ($targetCurrency instanceof Currency
              && $targetCurrency->exists()
             ) {
                 $convertedAmount = $amount * $targetCurrency->Factor;
@@ -226,7 +250,7 @@ class Currency extends DataObject
             $originalCurrency = self::get()
                     ->filter('Currency', $fromCurrency)
                     ->first();
-            if ($originalCurrency instanceof SilvercartCurrency
+            if ($originalCurrency instanceof Currency
              && $originalCurrency->exists()
             ) {
                 $convertedAmount = $amount / $originalCurrency->Factor;
@@ -278,7 +302,24 @@ class Currency extends DataObject
     {
         return self::convertAmountWithCurrentExchangeRate($fromCurrency, $toCurrency);
     }
-
+    
+    /**
+     * Returns the endpoint URL including the required API key parameter.
+     * If no API key is set up, an Exception will be thrown.
+     * 
+     * @return string
+     * 
+     * @throws Exception
+     */
+    public static function getEndpointURL() : string
+    {
+        $config = self::config();
+        if (empty($config->api_key)) {
+            throw new Exception("Please add an API key to use the currency converter by setting up the 'api_key' property within the namespace 'SilverCart\Currencies\Model\Currency' in you YAML configuration.");
+        }
+        return "{$config->api_endpoint}/api/{$config->api_version}/convert?apiKey={$config->api_key}";
+    }
+    
     /**
      * Returns the converted amount using the current exchange rate from 
      * $fromCurrency to $toCurrency using the free API currencyconverterapi.com.
@@ -295,8 +336,9 @@ class Currency extends DataObject
     public static function convertAmountWithCurrentExchangeRate(string $fromCurrency, string $toCurrency, float $amount = 1) : float
     {
         $factor   = 0;
+        $endpoint = self::getEndpointURL();
         $property = "{$fromCurrency}_{$toCurrency}";
-        $json     = file_get_contents("https://free.currencyconverterapi.com/api/v6/convert?q={$property}&compact=ultra");
+        $json     = file_get_contents("{$endpoint}&q={$property}&compact=ultra");
         $object   = json_decode($json);
         if (property_exists($object, $property)) {
             $factor = $object->{$property};
