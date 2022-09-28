@@ -42,6 +42,18 @@ class CurrencyAdmin extends SilverCartModelAdmin
      */
     private static $menu_title = 'Currencies';
     /**
+     * Menu icon
+     * 
+     * @var string
+     */
+    private static $menu_icon = null;
+    /**
+     * Menu icon CSS class
+     * 
+     * @var string
+     */
+    private static $menu_icon_class = 'font-icon-menu-reports';
+    /**
      * Managed models
      *
      * @var array
