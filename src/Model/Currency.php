@@ -340,7 +340,9 @@ class Currency extends DataObject
         $property = "{$fromCurrency}_{$toCurrency}";
         $json     = file_get_contents("{$endpoint}&q={$property}&compact=ultra");
         $object   = json_decode($json);
-        if (property_exists($object, $property)) {
+        if (is_object($object)
+         && property_exists($object, $property)
+        ) {
             $factor = $object->{$property};
         }
         return $factor * $amount;
